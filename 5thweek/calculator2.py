@@ -50,9 +50,10 @@ args=Args()
 #configure class
 class Config(object):
 	def __init__(self):
+
 		self.config=self._read_config()
 
-	def _read_conifg(self):
+	def _read_config(self):
 		config_path=args.config_path
 		config={}
 		
@@ -61,14 +62,14 @@ class Config(object):
 				key,value=line.strip().split('=')
 				try:
 					config[key]=float(value)
-				except:
+				except ValueError:
 					print('Parameter Error')
 					exit()
 		return config
 
 	def _get_config(self,key):
 		try:
-			return self.config
+			return self.config[key]
 		except KeyError:
 			print('Config Error')
 			exit()
@@ -98,9 +99,9 @@ class Userdata(object):
 	def  _read_users_data(self):
 		userdata_path=args.userdata_path
 		userdata=[]
-		with open userdata_path as f:
+		with open(userdata_path) as f:
 			for line in f.readlines():
-				employee_id,income_string=line.strip.split(',')
+				employee_id,income_string=line.strip().split(',')
 				try:
 					income=int(income_string)
 				except ValueError:
@@ -122,7 +123,7 @@ class Calculator(object):
 	def calculator_social_insurance(income):
 		if income<config.social_insurance_baseline_low:
 			return config.social_insurance_baseline_low*config.social_insurance_total_rate
-		if income>config.social_insurance_baselin_high:
+		if income>config.social_insurance_baseline_high:
 			return config.social_insurance_baseline_high*config.social_insurance_total_rate
 
 		return income*config.social_insurance_total_rate
@@ -152,7 +153,7 @@ class Calculator(object):
 			result.append(data)
 		return result
 
-	def export(self,default='csv')
+	def export(self,default='csv'):
 		result=self.calculator_all_userdata()
 		with open(args.export_path,'w',newline='') as f:
 			writer=csv.writer(f)
